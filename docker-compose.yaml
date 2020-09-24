@@ -1,0 +1,32 @@
+version: '2.4'
+
+services:
+  # react-recipes-client:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.dev
+  #   ports:
+  #     - 4000:4000
+  #   depends_on:
+  #     - mongo
+  #   volumes:
+  #     - /app/node_modules
+  #     - ./:/app/:delegated
+  # environment:
+  #   database__client: mysql
+  #   database__connection__host: db
+  #   database__connection__user: root
+  #   database__connection__password: YOURDBPASSWORDhere
+  #   database__connection__database: ghost
+
+  react-recipes-backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    ports:
+      - 4000:4000
+    # depends_on:
+    #   - db
+    volumes:
+      - /app/node_modules
+      - ./server:/app/:delegated
