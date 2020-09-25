@@ -7,6 +7,7 @@ export const typeDefs = gql`
   }
   type Mutation {
     addRecipe(data: AddRecipeInput): Recipe
+    signUp(data: SignUpInput): Token
   }
   input AddRecipeInput {
     name: String!
@@ -14,6 +15,11 @@ export const typeDefs = gql`
     description: String!
     instructions: String!
     likes: Int
+  }
+  input SignUpInput {
+    username: String!
+    email: String!
+    password: String!
   }
   type User {
     id: ID
@@ -32,6 +38,9 @@ export const typeDefs = gql`
     createdDate: Date
     likes: Int
     username: User
+  }
+  type Token {
+    token: String
   }
   scalar Date
 `;
