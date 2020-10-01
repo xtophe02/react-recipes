@@ -1,22 +1,63 @@
 import { useMemo } from 'react';
-import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
-// import { concatPagination } from '@apollo/client/utilities';
+import {
+  ApolloClient,
+  createHttpLink,
+  HttpLink,
+  InMemoryCache,
+  gql,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import { cache } from './cache';
 
 let apolloClient;
 
-function createApolloClient() {
+const ssrMode = typeof window === 'undefined';
+
+// const httpLink = createHttpLink({
+//   uri: ssrMode
+//     ? 'http://react-recipes-backend:4000/graphql'
+//     : 'http://localhost:4000/graphql',
+//   credentials: 'same-origin',
+// });
+// const authLink = setContext((_, { headers }) => {
+//   // get the authentication token from local storage if it exists
+//   const token = ssrMode ? null : localStorage.getItem('token');
+//   // return the headers to the context so httpLink can read them
+//   return {
+//     headers: {
+//       ...headers,
+//       authorization: token ? `Bearer ${token}` : '',
+//     },
+//   };
+// });
+
+const typeDefs = gql`
+  extend type Query {
+    isLoggedIn: Boolean!
+  }
+  extend type Query {
+    userLoggedIn: String!
+  }
+`;
+
+function createApolloClient(headers) {
   return new ApolloClient({
-    ssrMode: typeof window === 'undefined',
-    link: new HttpLink({
-      uri: 'http://localhost:4000/graphql', // Server URL (must be absolute)
-      credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
+    ssrMode,
+    link: createHttpLink({
+      uri: ssrMode
+        ? 'http://react-recipes-backend:4000/graphql'
+        : 'http://localhost:4000/graphql',
+      credentials: 'include',
+      headers: { ...headers },
     }),
-    cache: new InMemoryCache(),
+    // link: authLink.concat(httpLink),
+    cache: ssrMode ? new InMemoryCache() : cache,
+    typeDefs,
   });
 }
 
-export function initializeApollo(initialState = null) {
-  const _apolloClient = apolloClient ?? createApolloClient();
+export function initializeApollo(initialState = null, headers = null) {
+  const _apolloClient = apolloClient ?? createApolloClient(headers);
 
   // If your page has Next.js data fetching methods that use Apollo Client, the initial state
   // gets hydrated here

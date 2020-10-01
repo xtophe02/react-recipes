@@ -1,22 +1,61 @@
 // import styles from '../styles/Home.module.css';
 
-import { gql, useQuery } from '@apollo/client';
-import { HELLO } from '../src/queries';
+import { useQuery, gql } from '@apollo/client';
+import { ALLRECIPIES, USERLOGGEDIN } from '../src/queries';
 import Link from 'next/link';
+import { Layout, ListRecipies } from '../components';
+import { initializeApollo } from '../apollo/client';
+import { withSession } from '../src/withSession';
 
-export default function Home() {
+const Home = ({ isLoggedIn }) => {
   // return <div className={styles.container}>ola</div>;
-  const { data, loading, error } = useQuery(HELLO);
-  if (loading) return '...loading';
-  if (error) return '...error';
-  if (!data) return '...no data';
+  // const { data } = useQuery(ISLOGGEDIN);
+  // if (loading) return '...loading';
+  // if (error) return '...error';
+  // if (!data) return '...no data';
+  const { data } = useQuery(USERLOGGEDIN);
 
   return (
-    <>
-      <p>{data.hello}</p>
-      <Link href='/all-recipies'>
-        <a>All Recipies</a>
-      </Link>
-    </>
+    <Layout
+      title={`Welcome ${data && data.userLoggedIn}`}
+      subtitle='All Recipies'
+      isLoggedIn={isLoggedIn}
+    >
+      <ListRecipies />
+    </Layout>
   );
+};
+
+// export async function getServerSideProps({ req, res }) {
+//   const apolloClient = initializeApollo(null, req.headers);
+
+//   await apolloClient.query({
+//     query: CURRENTUSER,
+//     // variables: allPostsQueryVars,
+//   });
+
+//   return {
+//     props: {
+//       initialApolloState: apolloClient.cache.extract(),
+//       teste: 'sss',
+//     },
+//     // unstable_revalidate: 1,
+//   };
+// }
+
+export async function getStaticProps() {
+  const apolloClient = initializeApollo();
+
+  await apolloClient.query({
+    query: ALLRECIPIES,
+    // variables: allPostsQueryVars,
+  });
+
+  return {
+    props: {
+      initialApolloState: apolloClient.cache.extract(),
+    },
+  };
 }
+
+export default withSession(Home);

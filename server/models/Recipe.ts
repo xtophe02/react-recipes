@@ -4,11 +4,11 @@ const RecipeSchema = new Schema({
   name: {
     type: String,
     required: true,
+    unique: true,
   },
   category: {
     type: String,
     required: true,
-    unique: true,
   },
   description: {
     type: String,
@@ -29,6 +29,10 @@ const RecipeSchema = new Schema({
   username: {
     type: String,
   },
+});
+
+RecipeSchema.index({
+  '$**': 'text',
 });
 
 module.exports = model('Recipe', RecipeSchema);

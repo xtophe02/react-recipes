@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { Password } from '../utils/hashPassword';
+import { Cookies } from '../utils/cookies';
+import { Password } from '../utils/password';
 
 const createToken = (user: any, secret: any, expiresIn: any) => {
   const { username, email } = user;
@@ -8,15 +9,35 @@ const createToken = (user: any, secret: any, expiresIn: any) => {
 
 export const resolvers = {
   Query: {
-    hello: () => 'hello world',
+    hello: (_: any, __: any, { res }: any) => 'hello world',
     getAllRecipes: async (_: any, __: any, { Recipe }: any) =>
-      await Recipe.find(),
+      await Recipe.find().sort({ createdDate: 'desc' }),
+    getRecipe: async (_: any, { id }: any, { Recipe }: any) =>
+      await Recipe.findById(id),
+
+    currentUser: async (_: any, __: any, { user, User }: any) => {
+      if (!user) {
+        return null;
+      }
+      return User.findOne({ email: user.email }).populate('favorites');
+    },
+    searchRecipes: async (_: any, { searchTerm }: any, { Recipe }: any) => {
+      if (searchTerm) {
+        return Recipe.find(
+          { $text: { $search: searchTerm, $caseSensitive: false } },
+          { score: { $meta: 'textScore' } }
+        ).sort({ score: { $meta: 'textScore' } });
+      }
+      return Recipe.find().sort({ likes: 'desc', createdDate: 'desc' });
+    },
   },
   Mutation: {
-    addRecipe: async (_: any, { data }: any, { Recipe }: any) =>
-      await new Recipe({ ...data }).save(),
-    signUp: async (_: any, { data }: any, { User }: any) => {
+    addRecipe: async (_: any, { data }: any, { Recipe, user }: any) =>
+      await new Recipe({ ...data, username: user.username }).save(),
+
+    signUp: async (_: any, { data }: any, { User, res }: any) => {
       const { username, password } = data;
+
       const user = await User.findOne({ username });
       if (user) {
         throw new Error('User already exists');
@@ -27,7 +48,38 @@ export const resolvers = {
         ...data,
         password: hashedPassword,
       }).save();
-      return { token: createToken(newUser, process.env.JWT_SECRET, '1h') };
+      const userJwt = jwt.sign(
+        { email: newUser.email, username: newUser.username, id: newUser.id },
+        process.env.JWT_SECRET!
+      );
+
+      Cookies.setCookie(userJwt, res);
+
+      return newUser;
+    },
+    signIn: async (_: any, { data }: any, { User, res }: any) => {
+      const { email, password } = data;
+
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new Error('Invalid credentials email');
+      }
+      const matchPassword = await Password.compare(user.password, password);
+      if (!matchPassword) {
+        throw new Error('Invalid credentials pass');
+      }
+      const userJwt = jwt.sign(
+        { email: user.email, username: user.username, id: user.id },
+        process.env.JWT_SECRET!
+      );
+
+      Cookies.setCookie(userJwt, res);
+
+      return user;
+    },
+    logout: async (_: any, __: any, { res }: any) => {
+      Cookies.removeTokenCookie(res);
+      return true;
     },
   },
 };

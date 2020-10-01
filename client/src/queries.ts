@@ -11,9 +11,77 @@ export const ALLRECIPIES = gql`
       id
       name
       category
+    }
+  }
+`;
+export const GETRECIPE = gql`
+  query GetRecipe($id: ID!) {
+    getRecipe(id: $id) {
+      name
+      category
       description
       instructions
       createdDate
+      likes
+      username
+    }
+  }
+`;
+
+export const SIGNUP = gql`
+  mutation SignUp($data: SignUpInput) {
+    signUp(data: $data) {
+      email
+      username
+    }
+  }
+`;
+export const SIGNIN = gql`
+  mutation SignIn($data: SignInInput) {
+    signIn(data: $data) {
+      email
+      username
+    }
+  }
+`;
+export const CURRENTUSER = gql`
+  query CurrentUser {
+    currentUser {
+      email
+      joinDate
+      username
+    }
+  }
+`;
+
+export const ISLOGGEDIN = gql`
+  query IsLoggedIn {
+    isLoggedIn @client
+  }
+`;
+export const USERLOGGEDIN = gql`
+  query UserLoggedIn {
+    userLoggedIn @client
+  }
+`;
+export const LOGOUT = gql`
+  mutation {
+    logout
+  }
+`;
+
+export const ADDRECIPE = gql`
+  mutation AddRecipe($data: AddRecipeInput) {
+    addRecipe(data: $data) {
+      name
+    }
+  }
+`;
+export const SEARCHRECIPES = gql`
+  query SearchRecipes($searchTerm: String) {
+    searchRecipes(searchTerm: $searchTerm) {
+      id
+      name
       likes
     }
   }

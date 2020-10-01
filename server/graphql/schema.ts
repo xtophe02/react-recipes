@@ -4,10 +4,15 @@ export const typeDefs = gql`
   type Query {
     hello: String
     getAllRecipes: [Recipe]
+    getRecipe(id: ID!): Recipe
+    currentUser: User
+    searchRecipes(searchTerm: String): [Recipe]
   }
   type Mutation {
     addRecipe(data: AddRecipeInput): Recipe
-    signUp(data: SignUpInput): Token
+    signUp(data: SignUpInput): User
+    signIn(data: SignInInput): User
+    logout: Boolean!
   }
   input AddRecipeInput {
     name: String!
@@ -18,6 +23,10 @@ export const typeDefs = gql`
   }
   input SignUpInput {
     username: String!
+    email: String!
+    password: String!
+  }
+  input SignInInput {
     email: String!
     password: String!
   }
@@ -37,7 +46,7 @@ export const typeDefs = gql`
     instructions: String!
     createdDate: Date
     likes: Int
-    username: User
+    username: String
   }
   type Token {
     token: String
