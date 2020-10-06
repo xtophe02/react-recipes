@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useMutation, useApolloClient } from '@apollo/client';
 import { LOGOUT } from '../../src/queries';
-import { isLoggedInVar } from '../../apollo/cache';
+import { isLoggedInVar, userLoggedInVar } from '../../apollo/cache';
 
 const NavLink = ({ href, className, name }) => (
   <Link href={href}>
@@ -81,7 +81,9 @@ export const NavBar = ({ isLoggedIn }) => {
                     e.preventDefault();
                     logout();
                     localStorage.removeItem('email');
+                    localStorage.removeItem('username');
                     isLoggedInVar(false);
+                    userLoggedInVar('');
                     client.resetStore();
                   }}
                 >

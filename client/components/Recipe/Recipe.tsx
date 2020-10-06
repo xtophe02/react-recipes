@@ -8,8 +8,8 @@ export const Recipe = ({ data }) => {
     <>
       <div>
         {Object.keys(data).map((val) => (
-          <div className='block'>
-            <p key={val} className='is-size-5'>
+          <div key={val} className='block'>
+            <p className='is-size-5'>
               <strong>{capitalize(val)}</strong>: {data[val]}
             </p>
           </div>
