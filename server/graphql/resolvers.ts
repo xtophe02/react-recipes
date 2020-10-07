@@ -30,10 +30,21 @@ export const resolvers = {
       }
       return Recipe.find().sort({ likes: 'desc', createdDate: 'desc' });
     },
+    getUserRecipes: async (_: any, __: any, { Recipe, user }: any) =>
+      Recipe.find({ username: user.username }).sort({ createdDate: 'desc' }),
   },
   Mutation: {
     addRecipe: async (_: any, { data }: any, { Recipe, user }: any) =>
       await new Recipe({ ...data, username: user.username }).save(),
+    deleteRecipe: async (_: any, { id }: any, { Recipe, user }: any) => {
+      return Recipe.deleteOne(
+        { _id: id, username: user.username },
+        (err: any, res: any) => {
+          if (err) console.log('ERROR', err);
+          console.log('RES', res);
+        }
+      );
+    },
 
     signUp: async (_: any, { data }: any, { User, res }: any) => {
       const { username, password } = data;

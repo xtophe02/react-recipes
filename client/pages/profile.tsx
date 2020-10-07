@@ -6,18 +6,20 @@ import { CURRENTUSER } from '../src/queries';
 import { withSession } from '../src/withSession';
 
 const profile = ({ isLoggedIn }) => {
-  const { data, loading, error } = useQuery(CURRENTUSER);
-  // if (loading) return '...loading';
+  const { data, loading, error } = useQuery(CURRENTUSER, {
+    fetchPolicy: 'network-only',
+  });
+  if (loading) return '...loading';
   // if (error) return '...error';
   if (!data) return '...no data';
 
   return (
     <Layout
       title='Profile'
-      subtitle={loading ? '...loading' : data.currentUser.username}
+      subtitle={data && data.currentUser && data.currentUser.username}
       isLoggedIn={isLoggedIn}
     >
-      <Profile />
+      <Profile {...data} />
     </Layout>
   );
 };

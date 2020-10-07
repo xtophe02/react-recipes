@@ -7,9 +7,11 @@ export const typeDefs = gql`
     getRecipe(id: ID!): Recipe
     currentUser: User
     searchRecipes(searchTerm: String): [Recipe]
+    getUserRecipes: [Recipe]
   }
   type Mutation {
     addRecipe(data: AddRecipeInput): Recipe
+    deleteRecipe(id: ID!): Recipe
     signUp(data: SignUpInput): User
     signIn(data: SignInInput): User
     logout: Boolean!

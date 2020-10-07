@@ -14,10 +14,13 @@ const Home = ({ isLoggedIn }) => {
   // if (error) return '...error';
   // if (!data) return '...no data';
   const { data } = useQuery(USERLOGGEDIN);
-
+  let title;
+  React.useEffect(() => {
+    title = data.userLoggedIn;
+  }, []);
   return (
     <Layout
-      title={`Welcome ${data && data.userLoggedIn}`}
+      title={title ? `Welcome ${title}` : 'Please to sign In'}
       subtitle='All Recipies'
       isLoggedIn={isLoggedIn}
     >

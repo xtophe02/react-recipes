@@ -12,11 +12,8 @@ const initValues = {
   password: 'fcportu',
 };
 
-const signin = ({ isLoggedIn }) => {
+const signin = () => {
   const router = useRouter();
-  if (isLoggedIn) {
-    router.push('/');
-  }
   const client = useApolloClient();
   const [state, setState] = React.useState(initValues);
   const [signIn, { loading, error }] = useMutation(SIGNIN, {
@@ -65,4 +62,4 @@ const signin = ({ isLoggedIn }) => {
   );
 };
 
-export default withSession(signin);
+export default signin;

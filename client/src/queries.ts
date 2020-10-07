@@ -17,6 +17,7 @@ export const ALLRECIPIES = gql`
 export const GETRECIPE = gql`
   query GetRecipe($id: ID!) {
     getRecipe(id: $id) {
+      id
       name
       category
       description
@@ -36,6 +37,13 @@ export const SIGNUP = gql`
     }
   }
 `;
+export const DELETERECIPE = gql`
+  mutation DeleteRecipe($id: ID!) {
+    deleteRecipe(id: $id) {
+      name
+    }
+  }
+`;
 export const SIGNIN = gql`
   mutation SignIn($data: SignInInput) {
     signIn(data: $data) {
@@ -50,6 +58,20 @@ export const CURRENTUSER = gql`
       email
       joinDate
       username
+      favorites {
+        id
+        name
+      }
+    }
+  }
+`;
+export const GETUSERRECIPES = gql`
+  query GetUserRecipes {
+    getUserRecipes {
+      id
+      name
+      createdDate
+      likes
     }
   }
 `;
