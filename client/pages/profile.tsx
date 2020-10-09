@@ -2,25 +2,30 @@
 
 import { gql, useQuery } from '@apollo/client';
 import { Layout, Profile } from '../components/';
-import { CURRENTUSER } from '../src/queries';
+import { ALLRECIPIES } from '../src/queries';
 import { withSession } from '../src/withSession';
+import { initializeApollo } from '../apollo/client';
 
-const profile = ({ isLoggedIn }) => {
-  const { data, loading, error } = useQuery(CURRENTUSER, {
-    fetchPolicy: 'network-only',
-  });
-  if (loading) return '...loading';
-  // if (error) return '...error';
-  if (!data) return '...no data';
-
+const profile = () => {
   return (
-    <Layout
-      title='Profile'
-      subtitle={data && data.currentUser && data.currentUser.username}
-      isLoggedIn={isLoggedIn}
-    >
-      <Profile {...data} />
+    <Layout title='Profile' subtitle='username'>
+      <Profile />
     </Layout>
   );
 };
+
+export async function getStaticProps() {
+  const apolloClient = initializeApollo();
+
+  await apolloClient.query({
+    query: ALLRECIPIES,
+    // variables: allPostsQueryVars,
+  });
+
+  return {
+    props: {
+      initialApolloState: apolloClient.cache.extract(),
+    },
+  };
+}
 export default withSession(profile);

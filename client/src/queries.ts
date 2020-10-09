@@ -1,24 +1,33 @@
 import { gql } from '@apollo/client';
+import { Recipe } from '../components';
 
 export const HELLO = gql`
   query {
     hello
   }
 `;
+export const FRAGMENT_RECIPE = gql`
+  fragment NewRecipe on Recipe {
+    id
+    name
+  }
+`;
+
 export const ALLRECIPIES = gql`
   query {
     getAllRecipes {
-      id
-      name
+      ...NewRecipe
       category
+      username
     }
   }
+  ${FRAGMENT_RECIPE}
 `;
+
 export const GETRECIPE = gql`
   query GetRecipe($id: ID!) {
     getRecipe(id: $id) {
-      id
-      name
+      ...NewRecipe
       category
       description
       instructions
@@ -27,6 +36,7 @@ export const GETRECIPE = gql`
       username
     }
   }
+  ${FRAGMENT_RECIPE}
 `;
 
 export const SIGNUP = gql`
@@ -40,7 +50,7 @@ export const SIGNUP = gql`
 export const DELETERECIPE = gql`
   mutation DeleteRecipe($id: ID!) {
     deleteRecipe(id: $id) {
-      name
+      id
     }
   }
 `;
@@ -65,16 +75,16 @@ export const CURRENTUSER = gql`
     }
   }
 `;
-export const GETUSERRECIPES = gql`
-  query GetUserRecipes {
-    getUserRecipes {
-      id
-      name
-      createdDate
-      likes
-    }
-  }
-`;
+// export const GETUSERRECIPES = gql`
+//   query GetUserRecipes {
+//     getUserRecipes {
+//       id
+//       name
+//       createdDate
+//       likes
+//     }
+//   }
+// `;
 
 export const ISLOGGEDIN = gql`
   query IsLoggedIn {
@@ -91,13 +101,22 @@ export const LOGOUT = gql`
     logout
   }
 `;
+export const LIKERECIPE = gql`
+  mutation LikeRecipe($id: ID!) {
+    likeRecipe(id: $id) {
+      id
+      name
+    }
+  }
+`;
 
 export const ADDRECIPE = gql`
   mutation AddRecipe($data: AddRecipeInput) {
     addRecipe(data: $data) {
-      name
+      ...NewRecipe
     }
   }
+  ${FRAGMENT_RECIPE}
 `;
 export const SEARCHRECIPES = gql`
   query SearchRecipes($searchTerm: String) {

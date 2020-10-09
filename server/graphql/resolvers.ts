@@ -16,6 +16,7 @@ export const resolvers = {
       await Recipe.findById(id),
 
     currentUser: async (_: any, __: any, { user, User }: any) => {
+      console.log(user);
       if (!user) {
         return null;
       }
@@ -37,13 +38,17 @@ export const resolvers = {
     addRecipe: async (_: any, { data }: any, { Recipe, user }: any) =>
       await new Recipe({ ...data, username: user.username }).save(),
     deleteRecipe: async (_: any, { id }: any, { Recipe, user }: any) => {
-      return Recipe.deleteOne(
-        { _id: id, username: user.username },
-        (err: any, res: any) => {
-          if (err) console.log('ERROR', err);
-          console.log('RES', res);
+      try {
+        if (!user) {
+          throw new Error('need to be logged in');
         }
-      );
+        return Recipe.findOneAndRemove({
+          _id: id,
+          username: user.username,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     signUp: async (_: any, { data }: any, { User, res }: any) => {
@@ -91,6 +96,19 @@ export const resolvers = {
     logout: async (_: any, __: any, { res }: any) => {
       Cookies.removeTokenCookie(res);
       return true;
+    },
+    likeRecipe: async (_: any, { id }: any, { Recipe, user, User }: any) => {
+      if (!user) {
+        throw new Error('need to be logged in');
+      }
+      const recipe = await Recipe.findByIdAndUpdate(id, { $inc: { likes: 1 } });
+      console.log(recipe);
+      const teste = await User.findByIdAndUpdate(
+        { _id: user.id },
+        { $addToSet: { favorites: id } }
+      );
+      console.log(teste);
+      return recipe;
     },
   },
 };

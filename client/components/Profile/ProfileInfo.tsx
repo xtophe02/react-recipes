@@ -1,11 +1,13 @@
 import React from 'react';
 
-export const ProfileInfo = ({ email, username, joinDate, favorites }) => {
+export const ProfileInfo = ({ currentUser }) => {
+  const { email, username, joinDate, favorites } = currentUser;
   const formatDate = (date) => {
     const newDate = new Date(date).toLocaleDateString('pt-PT');
     const newTime = new Date(date).toLocaleTimeString('pt-PT');
     return `${newDate} at ${newTime}`;
   };
+
   return (
     <div>
       <div className='block'>

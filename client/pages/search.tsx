@@ -3,12 +3,11 @@ import React from 'react';
 import { useApolloClient } from '@apollo/client';
 import { Layout } from '../components/';
 import { SEARCHRECIPES } from '../src/queries';
-import { withSession } from '../src/withSession';
 import Link from 'next/link';
 
-const search = ({ isLoggedIn }) => {
+const search = () => {
   React.useEffect(() => {
-    setState(sessionStorage.getItem('searchItem'));
+    setState(sessionStorage.getItem('searchItem') || '');
     setRecipes(JSON.parse(sessionStorage.getItem('recipes')));
   }, []);
   const [recipes, setRecipes] = React.useState([]);
@@ -35,7 +34,7 @@ const search = ({ isLoggedIn }) => {
   };
 
   return (
-    <Layout title='Search' subtitle='Search any item' isLoggedIn={isLoggedIn}>
+    <Layout title='Search' subtitle='Search any item'>
       <div className='block'>
         <input
           className='input'
@@ -70,4 +69,4 @@ const search = ({ isLoggedIn }) => {
     </Layout>
   );
 };
-export default withSession(search);
+export default search;

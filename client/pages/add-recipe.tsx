@@ -1,9 +1,9 @@
 // import styles from '../styles/Home.module.css';
 import React from 'react';
-import { useMutation } from '@apollo/client';
+import { useMutation, gql } from '@apollo/client';
 import { Layout, AddRecipe, Error } from '../components/';
 import { withSession } from '../src/withSession';
-import { ADDRECIPE, GETRECIPE } from '../src/queries';
+import { ADDRECIPE, GETRECIPE, FRAGMENT_RECIPE } from '../src/queries';
 import { useRouter } from 'next/router';
 
 const initValues = {
@@ -20,11 +20,28 @@ const addRecipe = ({ isLoggedIn }) => {
   }
   const [state, setState] = React.useState(initValues);
   const [addRecipe, { loading, error }] = useMutation(ADDRECIPE, {
-    update(cache, { data }) {
-      cache.writeQuery({
-        query: GETRECIPE,
-        variables: { id: data.addRecipe.id },
-        data,
+    update(cache, { data: { addRecipe } }) {
+      // cache.writeQuery({
+      //   query: GETRECIPE,
+      //   variables: { id: addRecipe.id },
+      //   data: addRecipe,
+      // });
+      cache.modify({
+        fields: {
+          getAllRecipes(existingRecipiesRefs = [], { readField }) {
+            const newRecipeRef = cache.writeFragment({
+              data: addRecipe,
+              fragment: FRAGMENT_RECIPE,
+            });
+            // const newRecipeRef = cache.writeQuery({
+            //   query: GETRECIPE,
+            //   variables: { id: addRecipe.id },
+            //   data: addRecipe,
+            // });
+
+            return [...existingRecipiesRefs, newRecipeRef];
+          },
+        },
       });
     },
   });

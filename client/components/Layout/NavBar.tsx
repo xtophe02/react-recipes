@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useMutation, useApolloClient } from '@apollo/client';
 import { LOGOUT } from '../../src/queries';
 import { isLoggedInVar, userLoggedInVar } from '../../apollo/cache';
@@ -12,7 +13,9 @@ const NavLink = ({ href, className, name }) => (
 
 export const NavBar = ({ isLoggedIn }) => {
   const client = useApolloClient();
+  const router = useRouter();
   const [logout] = useMutation(LOGOUT);
+
   return (
     <nav
       className='navbar is-light is-fixed-top'
@@ -77,14 +80,15 @@ export const NavBar = ({ isLoggedIn }) => {
               ) : (
                 <a
                   className='button is-danger is-outlined'
-                  onClick={(e) => {
+                  onClick={async (e) => {
                     e.preventDefault();
-                    logout();
+                    await logout();
                     localStorage.removeItem('email');
                     localStorage.removeItem('username');
                     isLoggedInVar(false);
                     userLoggedInVar('');
                     client.resetStore();
+                    router.push('/');
                   }}
                 >
                   Log Out

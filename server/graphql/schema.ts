@@ -15,6 +15,7 @@ export const typeDefs = gql`
     signUp(data: SignUpInput): User
     signIn(data: SignInInput): User
     logout: Boolean!
+    likeRecipe(id: ID!): Recipe
   }
   input AddRecipeInput {
     name: String!

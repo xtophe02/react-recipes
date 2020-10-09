@@ -7,7 +7,7 @@ import { Layout, ListRecipies } from '../components';
 import { initializeApollo } from '../apollo/client';
 import { withSession } from '../src/withSession';
 
-const Home = ({ isLoggedIn }) => {
+const Home = () => {
   // return <div className={styles.container}>ola</div>;
   // const { data } = useQuery(ISLOGGEDIN);
   // if (loading) return '...loading';
@@ -18,11 +18,12 @@ const Home = ({ isLoggedIn }) => {
   React.useEffect(() => {
     title = data.userLoggedIn;
   }, []);
+
   return (
     <Layout
-      title={title ? `Welcome ${title}` : 'Please to sign In'}
+      title={data ? `Welcome ${data.userLoggedIn}` : 'Please to sign In'}
+      // title={title ? `Welcome ${title}` : 'Please to sign In'}
       subtitle='All Recipies'
-      isLoggedIn={isLoggedIn}
     >
       <ListRecipies />
     </Layout>
@@ -61,4 +62,4 @@ export async function getStaticProps() {
   };
 }
 
-export default withSession(Home);
+export default Home;
