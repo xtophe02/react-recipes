@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { InputItem } from './InputItem';
-import { ButtonsSubmit } from '../ButtonsSubmit';
+import { ButtonsSubmit } from '../Buttons/ButtonsSubmit';
 
 export const SignUp = ({
   values,

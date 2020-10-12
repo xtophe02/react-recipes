@@ -22,7 +22,6 @@ export const typeDefs = gql`
     category: String!
     description: String!
     instructions: String!
-    likes: Int
   }
   input SignUpInput {
     username: String!
@@ -42,14 +41,14 @@ export const typeDefs = gql`
     joinDate: Date
   }
   type Recipe {
-    id: ID
+    id: ID!
     name: String!
     category: String!
     description: String!
     instructions: String!
     createdDate: Date
     likes: Int
-    username: String
+    author: User
   }
   type Token {
     token: String

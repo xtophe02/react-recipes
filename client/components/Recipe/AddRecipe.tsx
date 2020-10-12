@@ -1,6 +1,6 @@
 import React from 'react';
 import { capitalize } from '../../src/capitalize';
-import { ButtonsSubmit } from '../ButtonsSubmit';
+import { ButtonsSubmit } from '../Buttons/ButtonsSubmit';
 import { RecipeInput } from './RecipeInput';
 
 export const AddRecipe = ({

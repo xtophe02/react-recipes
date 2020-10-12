@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
-import mongoose from 'mongoose';
+
 
 import { getUser } from './utils/getUser';
 const Recipe = require('./models/Recipe');
@@ -9,6 +9,7 @@ import { typeDefs } from './graphql/schema';
 import { resolvers } from './graphql/resolvers';
 import { getUserId } from './utils/getUserId';
 import cors from 'cors';
+import {db} from './mongodb'
 
 require('dotenv').config();
 
@@ -23,15 +24,7 @@ const app = express();
 //   credentials: true, // <-- REQUIRED backend setting
 // };
 // app.use(cors(corsOptions));
-mongoose
-  .connect(process.env.MONGO_URL!, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  })
-  .then(() => console.log('DB connect'))
-  .catch((err) => console.log(err));
+db()
 
 const server = new ApolloServer({
   typeDefs,
@@ -47,6 +40,7 @@ const server = new ApolloServer({
       user,
       Recipe,
       User,
+    
     };
   },
 });

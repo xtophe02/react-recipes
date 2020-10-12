@@ -9,10 +9,12 @@ export const Profile = () => {
   if (loading) return '...loading';
   if (error) return '...error';
   if (!data) return '...no data';
+  console.log(error)
   // let username;
   // React.useEffect(() => {
   //   username = data.currentUser.username;
   // }, []);
+  
   return (
     <div className='columns'>
       <div className='column'>

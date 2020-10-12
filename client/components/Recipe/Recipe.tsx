@@ -1,23 +1,48 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { capitalize } from '../../src/capitalize';
-import { DELETERECIPE, LIKERECIPE, USERLOGGEDIN } from '../../src/queries';
+import {
+  DELETERECIPE,
+  LIKERECIPE,
+  USERLOGGEDIN,
+  GETRECIPE,
+} from '../../src/queries';
 import { useMutation, useQuery } from '@apollo/client';
 import { Error } from '../index';
+import { ButtonBack } from '../Buttons/ButtonBack';
 
-export const Recipe = ({ data }) => {
-  const router = useRouter();
+export const Recipe = (data) => {
+  // const {author, category, description, instructions, createdDate, likes, id, name} = data
+  // const { data, loading, error } = useQuery(GETRECIPE, {var});
+  // console.log(data);
   const [deleteRecipe] = useMutation(DELETERECIPE);
-  const [likeRecipe] = useMutation(LIKERECIPE);
+  const [likeRecipe] = useMutation(LIKERECIPE, {
+    onCompleted: (data) => console.log(data),
+  });
+
+  const [like, setLike] = React.useState(
+    data.author.favorites.includes(data.id)
+  );
   const {
     data: { userLoggedIn },
   } = useQuery(USERLOGGEDIN);
-
+  // const router = useRouter();
+  // console.log(data);
   return (
     <>
       <div>
         {Object.keys(data).map((val) => {
-          if (val === '__typename') return null;
+          if (val === '__typename' || val === 'id') return null;
+
+          if (val === 'author') {
+            return (
+              <div key={data[val].id} className='block'>
+                <p className='is-size-5'>
+                  <strong>{capitalize(val)}</strong>: {data[val].username}
+                </p>
+              </div>
+            );
+          }
           return (
             <div key={val} className='block'>
               <p className='is-size-5'>
@@ -28,7 +53,7 @@ export const Recipe = ({ data }) => {
         })}
       </div>
       <div className='buttons is-right'>
-        {data.username === userLoggedIn && (
+        {data.author.username === userLoggedIn && (
           <button
             className='button is-danger'
             onClick={async () => {
@@ -43,10 +68,11 @@ export const Recipe = ({ data }) => {
             Delete
           </button>
         )}
-        {data.username !== userLoggedIn && (
+        {data.author.username !== userLoggedIn && (
           <button
-            className='button is-info'
+            className={`button ${like && 'is-info'}`}
             onClick={async () => {
+              setLike(!like);
               try {
                 await likeRecipe({ variables: { id: data.id } });
               } catch (error) {
@@ -60,9 +86,7 @@ export const Recipe = ({ data }) => {
           </button>
         )}
 
-        <button className='button' onClick={() => router.back()}>
-          Go back
-        </button>
+        <ButtonBack />
       </div>
     </>
   );

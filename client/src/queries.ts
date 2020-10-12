@@ -1,5 +1,4 @@
 import { gql } from '@apollo/client';
-import { Recipe } from '../components';
 
 export const HELLO = gql`
   query {
@@ -18,7 +17,10 @@ export const ALLRECIPIES = gql`
     getAllRecipes {
       ...NewRecipe
       category
-      username
+      author {
+        id
+        username
+      }
     }
   }
   ${FRAGMENT_RECIPE}
@@ -33,7 +35,13 @@ export const GETRECIPE = gql`
       instructions
       createdDate
       likes
-      username
+      author {
+        id
+        username
+        favorites {
+          id
+        }
+      }
     }
   }
   ${FRAGMENT_RECIPE}

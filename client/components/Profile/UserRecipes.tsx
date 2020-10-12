@@ -56,7 +56,7 @@ export const UserRecipes = ({ username }) => {
       ) : (
         data &&
         data.getAllRecipes.map((recipe) => {
-          if (recipe.username === username) {
+          if (recipe.author.username === username) {
             return (
               <div key={recipe.id} className='media'>
                 <Link href={`/recipes/${recipe.id}`}>

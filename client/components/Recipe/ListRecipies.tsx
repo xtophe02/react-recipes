@@ -10,6 +10,9 @@ export const ListRecipies = () => {
   // if (error) return '...error';
   // if (!data) return '...no data';
 
+  if (data.getAllRecipes.length <= 0)
+    return <p>No Recipes... Please to add a few</p>;
+
   return (
     <div className='columns is-centered'>
       <div className='column is-8 has-text-centered'>

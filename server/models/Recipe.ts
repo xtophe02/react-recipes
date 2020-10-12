@@ -26,8 +26,9 @@ const RecipeSchema = new Schema({
     type: Number,
     default: 0,
   },
-  username: {
-    type: String,
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
   },
 });
 
